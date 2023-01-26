@@ -9,8 +9,8 @@ import { useCookies, withCookies } from 'react-cookie'
 // https://headlessui.dev/react/menu#integrating-with-next-js
 const CustomLink = ({ href, children, as, locale, ...props }): JSX.Element => {
   return (
-    <Link href={href} as={as} locale={locale}>
-      <a {...props}>{children}</a>
+    <Link href={href} as={as} locale={locale} {...props}>
+      {children}
     </Link>
   )
 }
@@ -21,6 +21,12 @@ const localeText = (locale: string): string => {
       return '🇬🇧 English'
     case 'zh-CN':
       return '🇨🇳 简体中文'
+    case 'hi':
+      return '🇮🇳 हिन्दी'
+    case 'tr-TR':
+      return '🇹🇷 Türkçe'
+    case 'zh-TW':
+      return '🇹🇼 繁體中文'
     default:
       return '🇬🇧 English'
   }

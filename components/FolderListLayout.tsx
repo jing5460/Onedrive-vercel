@@ -41,6 +41,7 @@ const FolderListLayout = ({
   totalGenerating,
   handleSelectedDownload,
   folderGenerating,
+  handleSelectedPermalink,
   handleFolderDownload,
   toast,
 }) => {
@@ -53,7 +54,7 @@ const FolderListLayout = ({
   const getItemPath = (name: string) => `${path === '/' ? '' : path}/${encodeURIComponent(name)}`
 
   return (
-    <div className="rounded bg-white dark:bg-gray-900 dark:text-gray-100">
+    <div className="rounded bg-white dark:bg-gray-900 dark:text-gray-100 shadow-sm">
       <div className="grid grid-cols-12 items-center space-x-2 border-b border-gray-900/10 px-3 dark:border-gray-500/30">
         <div className="col-span-12 py-2 text-xs font-bold uppercase tracking-widest text-gray-600 dark:text-gray-300 md:col-span-6">
           {t('Name')}
@@ -75,6 +76,17 @@ const FolderListLayout = ({
               indeterminate={true}
               title={t('Select files')}
             />
+            <button
+              title={t('Copy selected files permalink')}
+              className="cursor-pointer rounded p-1.5 hover:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white dark:hover:bg-gray-600 disabled:dark:text-gray-600 disabled:hover:dark:bg-gray-900"
+              disabled={totalSelected === 0}
+              onClick={() => {
+                clipboard.copy(handleSelectedPermalink(getBaseUrl()))
+                toast.success(t('Copied selected files permalink.'))
+              }}
+            >
+              <FontAwesomeIcon icon={['far', 'copy']} size="lg" />
+            </button>
             {totalGenerating ? (
               <Downloading title={t('Downloading selected files, refresh page to cancel')} style="p-1.5" />
             ) : (
@@ -96,10 +108,12 @@ const FolderListLayout = ({
           className="grid grid-cols-12 transition-all duration-100 hover:bg-gray-100 dark:hover:bg-gray-850"
           key={c.id}
         >
-          <Link href={`${path === '/' ? '' : path}/${encodeURIComponent(c.name)}`} passHref>
-            <a className="col-span-12 md:col-span-10">
-              <FileListItem fileContent={c} />
-            </a>
+          <Link
+            href={`${path === '/' ? '' : path}/${encodeURIComponent(c.name)}`}
+            passHref
+            className="col-span-12 md:col-span-10"
+          >
+            <FileListItem fileContent={c} />
           </Link>
 
           {c.folder ? (

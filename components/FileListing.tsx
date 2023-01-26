@@ -240,7 +240,7 @@ const FileListing: FC<{ query?: ParsedUrlQuery }> = ({ query }) => {
         .filter(c => selected[c.id])
         .map(c => ({
           name: c.name,
-          url: `/api/raw/?path=${path}/${c.name}${hashedToken ? `&odpt=${hashedToken}` : ''}`,
+          url: `/api/raw/?path=${path}/${encodeURIComponent(c.name)}${hashedToken ? `&odpt=${hashedToken}` : ''}`,
         }))
 
       if (files.length == 1) {
@@ -266,6 +266,17 @@ const FileListing: FC<{ query?: ParsedUrlQuery }> = ({ query }) => {
             toast.error(t('Failed to download selected files.'), { id: toastId })
           })
       }
+    }
+
+    // Get selected file permalink
+    const handleSelectedPermalink = (baseUrl: string) => {
+      return getFiles()
+        .filter(c => selected[c.id])
+        .map(
+          c =>
+            `${baseUrl}/api/raw/?path=${path}/${encodeURIComponent(c.name)}${hashedToken ? `&odpt=${hashedToken}` : ''}`
+        )
+        .join('\n')
     }
 
     // Folder recursive download
@@ -324,6 +335,7 @@ const FileListing: FC<{ query?: ParsedUrlQuery }> = ({ query }) => {
       totalGenerating,
       handleSelectedDownload,
       folderGenerating,
+      handleSelectedPermalink,
       handleFolderDownload,
     }
 
@@ -370,7 +382,7 @@ const FileListing: FC<{ query?: ParsedUrlQuery }> = ({ query }) => {
 
         {readmeFile && (
           <div className="mt-4">
-            <MarkdownPreview file={readmeFile} path={path} standalone={false} proxy={true} />
+            <MarkdownPreview file={readmeFile} path={path} standalone={false} />
           </div>
         )}
       </>

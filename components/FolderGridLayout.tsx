@@ -64,6 +64,7 @@ const FolderGridLayout = ({
   totalGenerating,
   handleSelectedDownload,
   folderGenerating,
+  handleSelectedPermalink,
   handleFolderDownload,
   toast,
 }) => {
@@ -76,7 +77,7 @@ const FolderGridLayout = ({
   const getItemPath = (name: string) => `${path === '/' ? '' : path}/${encodeURIComponent(name)}`
 
   return (
-    <div className="rounded bg-white dark:bg-gray-900 dark:text-gray-100">
+    <div className="rounded bg-white dark:bg-gray-900 dark:text-gray-100 shadow-sm">
       <div className="flex items-center border-b border-gray-900/10 px-3 text-xs font-bold uppercase tracking-widest text-gray-600 dark:border-gray-500/30 dark:text-gray-400">
         <div className="flex-1">{t('{{count}} item(s)', { count: folderChildren.length })}</div>
         <div className="flex p-1.5 text-gray-700 dark:text-gray-400">
@@ -86,6 +87,17 @@ const FolderGridLayout = ({
             indeterminate={true}
             title={t('Select all files')}
           />
+          <button
+            title={t('Copy selected files permalink')}
+            className="cursor-pointer rounded p-1.5 hover:bg-gray-300 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-white dark:hover:bg-gray-600 disabled:dark:text-gray-600 disabled:hover:dark:bg-gray-900"
+            disabled={totalSelected === 0}
+            onClick={() => {
+              clipboard.copy(handleSelectedPermalink(getBaseUrl()))
+              toast.success(t('Copied selected files permalink.'))
+            }}
+          >
+            <FontAwesomeIcon icon={['far', 'copy']} size="lg" />
+          </button>
           {totalGenerating ? (
             <Downloading title={t('Downloading selected files, refresh page to cancel')} style="p-1.5" />
           ) : (
@@ -176,9 +188,7 @@ const FolderGridLayout = ({
             </div>
 
             <Link href={getItemPath(c.name)} passHref>
-              <a>
-                <GridItem c={c} path={getItemPath(c.name)} />
-              </a>
+              <GridItem c={c} path={getItemPath(c.name)} />
             </Link>
           </div>
         ))}
